@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -qq
-        sudo apt-get install -y -qq build-essential unrar
+        sudo apt-get install -y -qq build-essential
     
     - name: Build PikaJieQi Enhanced
       run: |
@@ -30,10 +30,8 @@ jobs:
     - name: Download NNUE
       run: |
         cd src
-        curl -sL "https://github.com/official-pikafish/Pikafish/releases/download/Pikafish-2026-09-06/Pikafish.2026-09-06.7z" -o pk.7z
-        mkdir -p pk_extract
-        unrar x -y pk.7z pk_extract/ > /dev/null 2>&1 || true
-        cp pk_extract/pikafish.nnue .
+        # Download NNUE from official Pikafish Networks repo (direct .nnue file)
+        curl -sL "https://github.com/official-pikafish/Networks/releases/download/master-net/pikafish.nnue" -o pikafish.nnue
         ls -la pikafish.nnue
     
     - name: Test engine UCI
@@ -45,14 +43,14 @@ jobs:
         echo "---"
         (echo -e "uci\nsetoption name EvalFile value pikafish.nnue\nisready\nposition startpos moves c3c4N\ngo infinite"; sleep 3; echo "stop"; sleep 1; echo "quit") | ./PikaJieQi | grep bestmove
     
-    - name: Test sigmoid aggregation
+    - name: Verify patches
       run: |
         cd src
-        echo "=== Verify sigmoid patch ==="
+        echo "=== Sigmoid aggregation ==="
         grep -c "sigmoid\|FLIP_SCALING\|winrateSum" misc.h
-        echo "=== Verify chance branch reduction ==="
+        echo "=== Chance branch reduction ==="
         grep -c "reveal_depth_reduction" search.cpp
-        echo "=== Verify mate fix ==="
+        echo "=== Mate fix ==="
         grep -c "allDecisive\|bestWinMate" misc.h
     
     - name: Build JieqiArena
@@ -65,8 +63,6 @@ jobs:
     - name: Self-play test (1 round)
       run: |
         cd src
-        # Build a second copy (original without patches would be ideal,
-        # but for CI we just test that the engine plays a full game)
         echo -e "jai
         setoption name Engine1Path value $(pwd)/PikaJieQi
         setoption name Engine2Path value $(pwd)/PikaJieQi
