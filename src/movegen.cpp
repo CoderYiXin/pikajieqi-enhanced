@@ -60,7 +60,17 @@ namespace {
                               : pos.check_squares(Pt);
 
         while (b)
-            *moveList++ = make_move(from, pop_lsb(b));
+        {
+            Square to = pop_lsb(b);
+            // KING-GUARD: never generate a king capture. On dark-chess
+            // "phantom check" positions (an unrevealed piece is presumed to
+            // attack the opponent king) the side to move may appear able to
+            // capture the king; executing such a move corrupts the position
+            // (assert `type_of(captured) != KING` / crash).
+            if (type_of(pos.piece_on(to)) == KING)
+                continue;
+            *moveList++ = make_move(from, to);
+        }
     }
 
     return moveList;
@@ -95,7 +105,12 @@ namespace {
             b &= ~attacks_bb<ROOK>(pos.square<KING>(~Us));
 
         while (b)
-            *moveList++ = make_move(ksq, pop_lsb(b));
+        {
+            Square to = pop_lsb(b);
+            if (type_of(pos.piece_on(to)) == KING)   // KING-GUARD
+                continue;
+            *moveList++ = make_move(ksq, to);
+        }
     }
 
     return moveList;

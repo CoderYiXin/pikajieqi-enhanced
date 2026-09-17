@@ -443,6 +443,12 @@ bool Position::legal(Move m) const {
 
   assert(is_ok(m));
 
+  // KING-GUARD: reject any move that captures a king (can reach here via
+  // transposition-table / exclusion-move validation on phantom-check
+  // positions where a king appears capturable).
+  if (type_of(piece_on(to_sq(m))) == KING)
+      return false;
+
   Color us = sideToMove;
   Square from = from_sq(m);
   Square to = to_sq(m);
