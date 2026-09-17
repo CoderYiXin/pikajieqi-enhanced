@@ -2,7 +2,9 @@
 *.nnue
 PikaJieQi
 pikafish
+pikajieqi-native
 *.exe
 *.log
 __pycache__/
 *.pyc
+.env

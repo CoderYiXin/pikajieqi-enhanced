@@ -1,65 +1,63 @@
-# PikaJieQi Enhanced
+# PikaJieQi Enhanced — Cờ Úp Bot
 
-PikaJieQi cờ úp engine with algorithms ported from multiple sources.
+Bot cờ úp (mystery_xiangqi) cho gamevh.net với engine **PikaJieQi Enhanced**.
 
-## Algorithms Ported
+## Thuật toán đã port
 
-### ✅ 1. Sigmoid Flip Aggregation (from official Pikafish jieqi branch)
-- **Source**: `official-pikafish/Pikafish` jieqi branch (commit 9b963f7)
-- **File**: `src/misc.h` — `ScoreCalc::CalcEvg()`
-- **Change**: Replace linear average with sigmoid winrate aggregation
-- **Result**: +75% win rate vs original (3W-0L-1D)
-- **Why**: Sigmoid correctly handles non-linear score distributions
+| # | Algorithm | Source | Impact |
+|---|---|---|---|
+| 1 | Sigmoid flip aggregation | Official Pikafish jieqi (9b963f7) | +75% win rate |
+| 2 | Chance branch reduction | AB-JChess | Giảm depth cho pawn/advisor reveals |
+| 3 | Mate fix in flip_search | Official Pikafish jieqi (10334fe) | Correct mate detection |
 
-### ✅ 2. Chance Branch Reduction (from AB-JChess)
-- **Source**: `lxsgx23/AB-JChess`
-- **File**: `src/search.cpp` — `reveal_depth_reduction()`
-- **Change**: Reduce search depth for low-value reveals (pawn/advisor by 1 ply)
-- **Why**: Save search time on less important reveals
+## Cấu trúc
 
-### ✅ 3. Mate Fix in Flip Search (from official Pikafish jieqi branch)
-- **Source**: `official-pikafish/Pikafish` jieqi branch (commit 10334fe)
-- **File**: `src/misc.h` — `ScoreCalc::CalcEvg()` allDecisive check
-- **Change**: Track best_win_mate / best_loss_mate, handle all-decisive positions
-- **Why**: Correct mate detection in flip search
-
-## Base Engine
-
-- **Fork**: `brianhliou/pikafish-jieqi-wasm` (branch `jieqi_old-mistboard`)
-- **Commit**: `e75cee3a` (pinned in `pikafish-jieqi.ref`)
-- **NNUE**: Standard `pikafish.nnue` from Pikafish releases
-
-## Build
-
-```bash
-cd src
-make -j ARCH=x86-64-sse41-popcnt build
+```
+cup_bot_jieqi.py              # Bot chính (Python, bet=1000)
+build_engine.sh               # Build PikaJieQi + download NNUE
+src/                          # Engine source (C++)
+.github/workflows/
+  test_engine.yml             # Build + test engine
+  run_bot.yml                 # Chạy bot trên gamevh.net (mỗi 6h)
 ```
 
-## Test with JieqiArena
+## Chạy local
 
 ```bash
-# Build JieqiArena from https://github.com/Velithia/JieqiArena
-echo -e "jai
-setoption name Engine1Path value ./PikaJieQi
-setoption name Engine2Path value /path/to/other/engine
-setoption name Engine1Options value name EvalFile value pikafish.nnue
-setoption name TotalRounds value 10
-setoption name MainTimeMs value 3000
-isready
-startmatch
-quit" | ./jieqi_arena
+# 1. Build engine
+bash build_engine.sh
+
+# 2. Install deps
+pip install websocket-client requests
+
+# 3. Run bot (bet=1000 xu)
+python3 cup_bot_jieqi.py
 ```
 
-## Sources
+## Chạy trên GitHub Actions
 
-| Algorithm | Source Repo | Impact |
-|---|---|---|
-| Sigmoid aggregation | official-pikafish/Pikafish (jieqi) | HIGH |
-| Chance branch reduction | lxsgx23/AB-JChess | MEDIUM |
-| Mate fix | official-pikafish/Pikafish (jieqi) | MEDIUM |
-| qsearch stop fix | brianhliou/pikafish-jieqi-wasm (mistboard) | HIGH |
-| dark-piece recursion fix | brianhliou/pikafish-jieqi-wasm (mistboard) | HIGH |
+Workflow `run_bot.yml` chạy mỗi 6 giờ:
+1. Build PikaJieQi Enhanced từ source
+2. Download NNUE
+3. Run bot (timeout 340 phút, bet=1000 xu)
+
+### Setup Secrets
+
+Vào **Settings → Secrets → Actions**:
+
+| Secret | Value |
+|---|---|
+| `CARO_USER19` | tài khoản gamevh.net |
+| `CARO_PASSWD19` | mật khẩu |
+
+Nếu không set, bot dùng default (`nguyen15` / `nhat123456`).
+
+## Engine
+
+- **Base**: `brianhliou/pikafish-jieqi-wasm` (jieqi_old-mistboard, commit e75cee3a)
+- **NNUE**: Standard `pikafish.nnue` từ `official-pikafish/Networks`
+- **Depth**: 19-25 trong 5s search
+- **go infinite + stop** pattern (go movetime không hoạt động trong jieqi branch)
 
 ## License
 
