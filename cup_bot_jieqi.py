@@ -120,19 +120,19 @@ PIKAJIEQI_BINARY_CANDIDATES = [
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "pikajieqi-native"),
 ]
 
-ENGINE_MULTIPV = 1
-MIN_MOVE_SECONDS = 2.0
+ENGINE_MULTIPV = 2
+MIN_MOVE_SECONDS = 3.0
 MOVE_DEADLINE_SECONDS = 30.0
-MAX_SAFE_MOVES = 250
+MAX_SAFE_MOVES = 20
 TRUST_ENGINE_AFTER = 100
 MAX_ENGINE_RESTARTS_PER_GAME = 2  # mỗi ván được restart engine tối đa 2 lần (reset lại quota đầu mỗi ván)
-MOVE_DEDUP_WINDOW = 0.1
+MOVE_DEDUP_WINDOW = 0.5
 KICK_MODE = "when_lose"
 KICK_DELAY = 5.0
 SIT_ALONE_TIMEOUT = 300.0  # ngồi chờ đối thủ trong bàn tối đa 5 phút rồi mới rời bàn
-BOT_BET_XU = 50000
+BOT_BET_XU = 5000
 BOT_USE_CREATE_TABLE = True
-BOT_MATCH_DURATION = '10'
+BOT_MATCH_DURATION = '5'
 BOT_TURN_DURATION = '30'
 BOT_ACC_DURATION = '0'
 BOT_BLOCK_SOFTWARE = '0'
