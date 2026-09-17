@@ -89,8 +89,8 @@ class _UrllibSession:
 requests = type('R', (), {'Session': _UrllibSession})()
 
 # ==================== TÀI KHOẢN ====================
-CARO_USER_DIRECT = "nguyen15"
-CARO_PASSWD_DIRECT = "nhat123456"
+CARO_USER_DIRECT = "nguyen17"
+CARO_PASSWD_DIRECT = "******"
 
 
 def _clean_env(val, default):
@@ -129,7 +129,7 @@ MAX_ENGINE_RESTARTS_PER_GAME = 3
 MOVE_DEDUP_WINDOW = 0.1
 KICK_MODE = "when_lose"
 KICK_DELAY = 5.0
-BOT_BET_XU = 10000
+BOT_BET_XU = 50000
 BOT_USE_CREATE_TABLE = True
 BOT_MATCH_DURATION = '10'
 BOT_TURN_DURATION = '30'
