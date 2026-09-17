@@ -1,0 +1,8 @@
+*.o
+*.nnue
+PikaJieQi
+pikafish
+*.exe
+*.log
+__pycache__/
+*.pyc
